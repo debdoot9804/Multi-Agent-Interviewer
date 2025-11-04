@@ -9,9 +9,10 @@ A realistic AI-powered interview simulation system built with **LangGraph** and 
   - 🤝 **HR Agent**: Asks up to 3 questions about cultural fit, soft skills, and teamwork
   - 👔 **Manager Agent**: Asks up to 2 questions about leadership, strategy, and career vision
 
+- **Experience-Level Adaptive**: Questions tailored to Junior, Mid-Level, or Senior positions
 - **LangGraph Orchestration**: Sophisticated workflow management with state transitions
 - **Azure OpenAI Integration**: Leverages Azure OpenAI models for intelligent question generation
-- **Context-Aware Questions**: Agents adapt questions based on previous answers
+- **Context-Aware Questions**: Agents adapt questions based on previous answers and candidate profile
 - **Modular Architecture**: Clean, maintainable code following industry best practices
 - **Interactive CLI**: User-friendly command-line interface with colored output
 - **Interview Summary**: Complete transcript of questions and answers
@@ -44,6 +45,8 @@ AI_Interviewer/
 │   └── __init__.py
 ├── tests/
 ├── main.py                  # Application entry point
+├── azure_clients.py         # Azure OpenAI client setup
+├── test_agent.py            # Test script for agents
 ├── .env                     # Environment variables (not in git)
 ├── .gitignore
 ├── requirements.txt
@@ -60,9 +63,10 @@ AI_Interviewer/
 
 ### Setup Steps
 
-1. **Clone the repository** (or navigate to your project directory):
+1. **Clone the repository**:
    ```bash
-   cd /Users/debdoot/Desktop/AI_Interviewer
+   git clone https://github.com/debdoot9804/Multi-Agent-Interviewer.git
+   cd Multi-Agent-Interviewer
    ```
 
 2. **Create a virtual environment**:
@@ -87,24 +91,55 @@ AI_Interviewer/
 
 5. **Configure your `.env` file** with your Azure OpenAI credentials:
    ```env
-   AZURE_OPENAI_API_KEY=your_api_key_here
-   AZURE_OPENAI_ENDPOINT=https://your-resource-name.openai.azure.com/
-   AZURE_OPENAI_DEPLOYMENT_NAME=your_deployment_name
-   AZURE_OPENAI_API_VERSION=2024-02-15-preview
+   OPENAI_API_KEY=your_api_key_here
+   OPENAI_ENDPOINT=https://your-resource-name.openai.azure.com/
+   OPENAI_CHAT_DEPLOYMENT_NAME=your_chat_deployment_name
+   OPENAI_EMBED_DEPLOYMENT_NAME=your_embed_deployment_name
+   API_VERSION=2024-02-15-preview
+   
+   # Optional: Interview Configuration
+   MAX_TECHNICAL_QUESTIONS=6
+   MAX_HR_QUESTIONS=3
+   MAX_MANAGER_QUESTIONS=2
+   TEMPERATURE=0.7
    ```
 
 ## 💻 Usage
 
-### Running the Interview
+### Option 1: Web Interface (Recommended)
+
+Run the beautiful Streamlit web application:
+
+```bash
+streamlit run app.py
+```
+
+The app will open in your browser with:
+- 🎨 Professional UI with gradient designs
+- 📊 Real-time progress tracking
+- 📈 Automatic scoring and feedback
+- 📋 Complete interview transcript
+
+See [STREAMLIT_README.md](STREAMLIT_README.md) for detailed information.
+
+### Option 2: Command Line Interface
+
+Run the CLI version:
 
 ```bash
 python main.py
 ```
 
+### Testing Agent Question Generation
+
+```bash
+python test_agent.py
+```
+
 ### Interview Flow
 
-1. **Initialization**: Enter your name and job role
-2. **Technical Round**: Answer up to 6 technical questions
+1. **Initialization**: Enter your name, job role, and experience level
+2. **Technical Round**: Answer up to 6 technical questions tailored to your experience level
 3. **HR Round**: Answer up to 3 HR/cultural fit questions
 4. **Manager Round**: Answer up to 2 managerial/strategic questions
 5. **Summary**: Option to view complete interview transcript
@@ -122,6 +157,7 @@ python main.py
 
 👤 Please enter your name: John Doe
 💼 Please enter the job role you're applying for: Senior Software Engineer
+📊 Please enter your experience level: Senior
 
 ============================================================
 💻  TECHNICAL ROUND  💻
@@ -168,7 +204,7 @@ The system uses LangGraph to orchestrate the interview process:
 ### State Management
 
 The system maintains a comprehensive state using TypedDict:
-- Candidate information
+- Candidate information (name, job role, experience level)
 - Current agent and question counts
 - Conversation history
 - Question-answer pairs
@@ -179,9 +215,9 @@ The system maintains a comprehensive state using TypedDict:
 Each agent:
 - Inherits from `BaseAgent`
 - Has a unique personality defined in prompts
-- Uses Azure OpenAI for question generation
+- Uses Azure OpenAI via centralized client (`azure_clients.py`)
 - Maintains context from previous answers
-- Adapts questions dynamically
+- Adapts questions dynamically based on experience level
 
 ## ⚙️ Configuration
 
@@ -189,21 +225,25 @@ Each agent:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `AZURE_OPENAI_API_KEY` | Azure OpenAI API key | Required |
-| `AZURE_OPENAI_ENDPOINT` | Azure OpenAI endpoint URL | Required |
-| `AZURE_OPENAI_DEPLOYMENT_NAME` | Deployment name | Required |
-| `AZURE_OPENAI_API_VERSION` | API version | 2024-02-15-preview |
+| `OPENAI_API_KEY` | Azure OpenAI API key | Required |
+| `OPENAI_ENDPOINT` | Azure OpenAI endpoint URL | Required |
+| `OPENAI_CHAT_DEPLOYMENT_NAME` | Chat deployment name | Required |
+| `OPENAI_EMBED_DEPLOYMENT_NAME` | Embedding deployment name | Optional |
+| `API_VERSION` | API version | 2024-02-15-preview |
 | `MAX_TECHNICAL_QUESTIONS` | Max technical questions | 6 |
 | `MAX_HR_QUESTIONS` | Max HR questions | 3 |
 | `MAX_MANAGER_QUESTIONS` | Max manager questions | 2 |
 | `TEMPERATURE` | Model temperature | 0.7 |
-| `MAX_TOKENS` | Max tokens per response | 500 |
 
 ## 🧪 Testing
 
+Run the test script to verify agent functionality:
+
 ```bash
-pytest tests/
+python test_agent.py
 ```
+
+This will test the Technical Agent's question generation with a mock interview state.
 
 ## 🛠️ Development
 
@@ -225,17 +265,25 @@ Edit the prompt templates in `src/prompts/templates.py` to modify:
 ## 📝 Future Enhancements
 
 - [ ] Web-based UI using FastAPI
-- [ ] Interview scoring and evaluation
+- [ ] Interview scoring and evaluation system
 - [ ] Resume parsing and context injection
 - [ ] Multi-language support
-- [ ] Interview session persistence
+- [ ] Interview session persistence (save/resume)
 - [ ] Analytics and insights dashboard
 - [ ] Voice-based interview mode
 - [ ] Real-time feedback mechanism
+- [ ] Integration with job boards
+- [ ] Custom question banks per industry
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## 📄 License
 
@@ -243,13 +291,18 @@ This project is open source and available under the MIT License.
 
 ## 👤 Author
 
-**Debdoot**
+**Debdoot Debbarma**
+- GitHub: [@debdoot9804](https://github.com/debdoot9804)
 
 ## 🙏 Acknowledgments
 
-- Built with [LangGraph](https://github.com/langchain-ai/langgraph)
+- Built with [LangGraph](https://github.com/langchain-ai/langgraph) for multi-agent orchestration
 - Powered by [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service)
-- Uses [LangChain](https://github.com/langchain-ai/langchain)
+- Uses [LangChain](https://github.com/langchain-ai/langchain) framework
+
+---
+
+**Note**: This is a simulation platform for educational and practice purposes. It's designed to help candidates prepare for real interviews and demonstrate multi-agent AI orchestration with LangGraph.
 
 ---
 

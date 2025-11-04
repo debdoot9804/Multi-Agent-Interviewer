@@ -83,7 +83,7 @@ class InterviewWorkflow:
         
         # Update state
         state["current_question"] = question
-        state["technical_questions_asked"] += 1
+        # Don't increment here - we'll increment when answer is processed
         
         # Add to conversation history
         message = Message(
@@ -110,7 +110,7 @@ class InterviewWorkflow:
         
         # Update state
         state["current_question"] = question
-        state["hr_questions_asked"] += 1
+        # Don't increment here - we'll increment when answer is processed
         state["current_agent"] = "hr"
         
         # Add to conversation history
@@ -138,7 +138,7 @@ class InterviewWorkflow:
         
         # Update state
         state["current_question"] = question
-        state["manager_questions_asked"] += 1
+        # Don't increment here - we'll increment when answer is processed
         state["current_agent"] = "manager"
         
         # Add to conversation history
@@ -163,14 +163,16 @@ class InterviewWorkflow:
         Returns:
             str: Next node to visit
         """
+        # If we've asked all technical questions, move to HR
         if state["technical_questions_asked"] >= settings.MAX_TECHNICAL_QUESTIONS:
             return "hr"
         
-        # Check if we have an answer to process
-        if state.get("last_answer"):
-            return "continue"
+        # If we just asked a question (current_question is set), stop here
+        if state.get("current_question"):
+            return "end"
         
-        return "end"
+        # Otherwise continue with technical questions
+        return "continue"
     
     def _route_from_hr(
         self, state: InterviewState
@@ -184,14 +186,16 @@ class InterviewWorkflow:
         Returns:
             str: Next node to visit
         """
+        # If we've asked all HR questions, move to Manager
         if state["hr_questions_asked"] >= settings.MAX_HR_QUESTIONS:
             return "manager"
         
-        # Check if we have an answer to process
-        if state.get("last_answer"):
-            return "continue"
+        # If we just asked a question (current_question is set), stop here
+        if state.get("current_question"):
+            return "end"
         
-        return "end"
+        # Otherwise continue with HR questions
+        return "continue"
     
     def _route_from_manager(
         self, state: InterviewState
@@ -205,16 +209,18 @@ class InterviewWorkflow:
         Returns:
             str: Next node to visit
         """
+        # If we've asked all manager questions, complete the interview
         if state["manager_questions_asked"] >= settings.MAX_MANAGER_QUESTIONS:
             state["is_complete"] = True
             state["current_agent"] = "complete"
             return "end"
         
-        # Check if we have an answer to process
-        if state.get("last_answer"):
-            return "continue"
+        # If we just asked a question (current_question is set), stop here
+        if state.get("current_question"):
+            return "end"
         
-        return "end"
+        # Otherwise continue with manager questions
+        return "continue"
     
     def process_answer(self, state: InterviewState, answer: str) -> InterviewState:
         """
@@ -235,7 +241,7 @@ class InterviewWorkflow:
         )
         state["conversation_history"].append(message)
         
-        # Create QA pair
+        # Create QA pair and increment question count
         if state["current_question"]:
             qa_pair = QuestionAnswer(
                 question=state["current_question"],
@@ -243,6 +249,17 @@ class InterviewWorkflow:
                 agent_type=state["current_agent"]
             )
             state["qa_pairs"].append(qa_pair)
+            
+            # Increment the appropriate counter based on current agent
+            if state["current_agent"] == "technical":
+                state["technical_questions_asked"] += 1
+            elif state["current_agent"] == "hr":
+                state["hr_questions_asked"] += 1
+            elif state["current_agent"] == "manager":
+                state["manager_questions_asked"] += 1
+        
+        # Clear current question so a new one will be generated
+        state["current_question"] = None
         
         # Set last answer for routing
         state["last_answer"] = answer

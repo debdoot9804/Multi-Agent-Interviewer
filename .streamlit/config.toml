@@ -1,0 +1,10 @@
+[server]
+# Automatically rerun the app when source files change
+runOnSave = true
+
+# Watch additional files/directories for changes
+fileWatcherType = "auto"
+
+[runner]
+# Faster reruns
+fastReruns = true

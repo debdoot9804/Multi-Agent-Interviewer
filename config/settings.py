@@ -16,7 +16,7 @@ OPENAI_API_VERSION = os.getenv("API_VERSION")
 
 # Interview Configuration
 MAX_TECHNICAL_QUESTIONS = int(os.getenv("MAX_TECHNICAL_QUESTIONS", "6"))
-MAX_HR_QUESTIONS = int(os.getenv("MAX_HR_QUESTIONS", "3"))
+MAX_HR_QUESTIONS = int(os.getenv("MAX_HR_QUESTIONS", "2"))
 MAX_MANAGER_QUESTIONS = int(os.getenv("MAX_MANAGER_QUESTIONS", "2"))
 
 # Model Configuration

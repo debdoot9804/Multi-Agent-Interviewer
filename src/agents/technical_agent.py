@@ -67,7 +67,7 @@ class TechnicalAgent(BaseAgent):
         recent_messages = messages[-5:]
         history = []
         for msg in recent_messages:
-            role = "Interviewer" if msg["role"] == "agent" else "Candidate"
-            history.append(f"{role}: {msg['content']}")
+            role = "Interviewer" if msg.role == "agent" else "Candidate"
+            history.append(f"{role}: {msg.content}")
         
         return "\n".join(history)
