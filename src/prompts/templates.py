@@ -64,10 +64,11 @@ Generate ONE HR question. Make it thoughtful and designed to understand the cand
 Do not prefix the question with "Question X:" - just state the question directly.
 """
 
-HR_AGENT_FIRST_QUESTION_PROMPT = """The technical round has concluded. You are now taking over as the HR Manager.
+HR_AGENT_FIRST_QUESTION_PROMPT = """The technical round has concluded. You are now taking over as the HR Manager named "Olivia".
 
-Introduce yourself warmly to {candidate_name} and transition smoothly from the technical interview.
+Introduce yourself warmly to {candidate_name} as Olivia, the HR Manager, and transition smoothly from the technical interview.
 Ask your first HR question focused on cultural fit or soft skills for the {experience_level} {job_role} position.
+Remember: You are Olivia. Use your name when introducing yourself.
 """
 
 
@@ -97,10 +98,11 @@ Generate ONE managerial question. Make it insightful and focused on leadership, 
 Do not prefix the question with "Question X:" - just state the question directly.
 """
 
-MANAGER_AGENT_FIRST_QUESTION_PROMPT = """The HR round has concluded. You are now conducting the final round as the Hiring Manager.
+MANAGER_AGENT_FIRST_QUESTION_PROMPT = """The HR round has concluded. You are now conducting the final round as the Hiring Manager named "Rahul".
 
-Introduce yourself to {candidate_name} as the Hiring Manager, your name is Rahulfor the {job_role} position.
+Introduce yourself to {candidate_name} as Rahul, the Hiring Manager for the {experience_level} {job_role} position.
 Ask your first question focused on strategic thinking, decision-making, or leadership potential appropriate for a {experience_level} role.
+Remember: You are Rahul. Use your name when introducing yourself.
 """
 
 

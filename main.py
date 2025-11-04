@@ -10,16 +10,74 @@ sys.path.insert(0, os.path.dirname(__file__))
 from config import settings
 from src.graph.state import create_initial_state, Message
 from src.graph.workflow import InterviewWorkflow
-from src.utils import (
-    print_banner,
-    print_agent_header,
-    print_question,
-    print_answer_prompt,
-    print_completion_message,
-    print_error,
-    print_info,
-    format_conversation_summary,
-)
+from colorama import Fore, Style, init
+
+# Initialize colorama
+init(autoreset=True)
+
+
+def print_banner():
+    """Print the application banner."""
+    banner = """
+    ╔═══════════════════════════════════════════════════╗
+    ║                                                   ║
+    ║          🤖 AI INTERVIEWER SYSTEM 🤖             ║
+    ║                                                   ║
+    ║    Multi-Agent Interview Simulation Platform     ║
+    ║                                                   ║
+    ╚═══════════════════════════════════════════════════╝
+    """
+    print(Fore.CYAN + banner + Style.RESET_ALL)
+
+
+def print_agent_header(agent_type: str):
+    """Print header when an agent takes over."""
+    headers = {
+        "technical": f"\n{Fore.BLUE}{'='*50}\n💻 TECHNICAL ROUND\n{'='*50}{Style.RESET_ALL}\n",
+        "hr": f"\n{Fore.GREEN}{'='*50}\n🤝 HR ROUND\n{'='*50}{Style.RESET_ALL}\n",
+        "manager": f"\n{Fore.MAGENTA}{'='*50}\n👔 MANAGERIAL ROUND\n{'='*50}{Style.RESET_ALL}\n"
+    }
+    print(headers.get(agent_type, ""))
+
+
+def print_question(question: str, question_num: int, max_questions: int):
+    """Print a question."""
+    print(f"\n{Fore.YELLOW}Question {question_num}/{max_questions}:{Style.RESET_ALL}")
+    print(f"{question}\n")
+
+
+def print_completion_message():
+    """Print interview completion message."""
+    print(f"\n{Fore.GREEN}{'='*50}")
+    print("🎉 INTERVIEW COMPLETE!")
+    print(f"{'='*50}{Style.RESET_ALL}\n")
+
+
+def print_info(message: str):
+    """Print info message."""
+    print(f"{Fore.CYAN}{message}{Style.RESET_ALL}")
+
+
+def print_error(message: str):
+    """Print error message."""
+    print(f"{Fore.RED}❌ {message}{Style.RESET_ALL}")
+
+
+def print_answer_prompt():
+    """Print answer prompt."""
+    print(f"{Fore.GREEN}Your answer: {Style.RESET_ALL}", end="")
+
+
+def format_conversation_summary(qa_pairs):
+    """Format conversation summary."""
+    if not qa_pairs:
+        return "No questions answered."
+    
+    summary = []
+    for i, qa in enumerate(qa_pairs, 1):
+        summary.append(f"\nQ{i}: {qa.question}")
+        summary.append(f"A{i}: {qa.answer or 'No answer'}\n")
+    return "\n".join(summary)
 
 
 def get_candidate_info() -> tuple[str, str, str]:
