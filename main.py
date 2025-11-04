@@ -22,12 +22,12 @@ from src.utils import (
 )
 
 
-def get_candidate_info() -> tuple[str, str]:
+def get_candidate_info() -> tuple[str, str, str]:
     """
     Get candidate information from user input.
     
     Returns:
-        tuple: (candidate_name, job_role)
+        tuple: (candidate_name, job_role, experience_level)
     """
     print_banner()
     print_info("Welcome to the AI Interviewer! Let's get started.\n")
@@ -42,20 +42,27 @@ def get_candidate_info() -> tuple[str, str]:
         print_error("Job role cannot be empty.")
         job_role = input("💼 Please enter the job role you're applying for: ").strip()
     
-    print_info(f"\nGreat! Starting your interview for {job_role} position.\n")
+    print_info("\nExperience Levels: Junior | Mid-Level | Senior")
+    experience_level = input("📊 Please enter your experience level: ").strip()
+    while not experience_level:
+        print_error("Experience level cannot be empty.")
+        experience_level = input("📊 Please enter your experience level: ").strip()
+    
+    print_info(f"\nGreat! Starting your interview for {experience_level} {job_role} position.\n")
     input("Press Enter to begin...")
     
-    return candidate_name, job_role
+    return candidate_name, job_role, experience_level
+
 
 
 def run_interview():
     """Main function to run the interview."""
     try:
         # Get candidate information
-        candidate_name, job_role = get_candidate_info()
+        candidate_name, job_role, experience_level = get_candidate_info()
         
         # Initialize state
-        state = create_initial_state(candidate_name, job_role)
+        state = create_initial_state(candidate_name, job_role, experience_level)
         
         # Create workflow
         workflow = InterviewWorkflow()

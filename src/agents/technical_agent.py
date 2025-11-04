@@ -40,6 +40,7 @@ class TechnicalAgent(BaseAgent):
             agent_type=self.agent_type,
             candidate_name=state["candidate_name"],
             job_role=state["job_role"],
+            experience_level=state["experience_level"],
             question_number=question_number,
             conversation_history=conversation_history,
             is_first_question=is_first

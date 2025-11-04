@@ -1,7 +1,7 @@
 # Core LangChain and LangGraph
-langgraph>=0.2.0
-langchain>=0.3.0
-langchain-openai>=0.2.0
+langgraph
+langchain
+langchain-openai
 
 # Azure OpenAI Support
 openai>=1.0.0
