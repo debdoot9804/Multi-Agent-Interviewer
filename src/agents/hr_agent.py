@@ -5,21 +5,17 @@ from typing import Dict, Any
 from .base_agent import BaseAgent
 from src.prompts.templates import get_agent_prompt
 from src.graph.state import InterviewState
+from config import settings
 
 
 class HRAgent(BaseAgent):
     """Agent responsible for asking HR and culture-fit questions."""
     
-    def __init__(self, settings):
-        """
-        Initialize the HR Agent.
-        
-        Args:
-            settings: Application settings
-        """
-        super().__init__(settings)
+    def __init__(self):
+        """Initialize the HR Agent."""
+        super().__init__()
         self.agent_type = "hr"
-        self.max_questions = settings.max_hr_questions
+        self.max_questions = settings.MAX_HR_QUESTIONS
     
     def ask_question(self, state: InterviewState) -> str:
         """

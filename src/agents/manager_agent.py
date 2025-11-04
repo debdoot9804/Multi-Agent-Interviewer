@@ -5,21 +5,17 @@ from typing import Dict, Any
 from .base_agent import BaseAgent
 from src.prompts.templates import get_agent_prompt
 from src.graph.state import InterviewState
+from config import settings
 
 
 class ManagerAgent(BaseAgent):
     """Agent responsible for asking managerial and strategic questions."""
     
-    def __init__(self, settings):
-        """
-        Initialize the Manager Agent.
-        
-        Args:
-            settings: Application settings
-        """
-        super().__init__(settings)
+    def __init__(self):
+        """Initialize the Manager Agent."""
+        super().__init__()
         self.agent_type = "manager"
-        self.max_questions = settings.max_manager_questions
+        self.max_questions = settings.MAX_MANAGER_QUESTIONS
     
     def ask_question(self, state: InterviewState) -> str:
         """

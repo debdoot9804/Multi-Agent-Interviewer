@@ -3,20 +3,14 @@ Base agent class for interview agents.
 """
 from typing import Dict, Any
 from langchain_openai import AzureChatOpenAI
-from config.settings import Settings
+from config import settings
 
 
 class BaseAgent:
     """Base class for all interview agents."""
     
-    def __init__(self, settings: Settings):
-        """
-        Initialize the base agent.
-        
-        Args:
-            settings: Application settings
-        """
-        self.settings = settings
+    def __init__(self):
+        """Initialize the base agent."""
         self.llm = self._create_llm()
     
     def _create_llm(self) -> AzureChatOpenAI:
@@ -27,12 +21,11 @@ class BaseAgent:
             AzureChatOpenAI: Configured LLM instance
         """
         return AzureChatOpenAI(
-            azure_endpoint=self.settings.azure_openai_endpoint,
-            azure_deployment=self.settings.azure_openai_deployment_name,
-            api_version=self.settings.azure_openai_api_version,
-            api_key=self.settings.azure_openai_api_key,
-            temperature=self.settings.temperature,
-            max_tokens=self.settings.max_tokens,
+            azure_endpoint=settings.OPENAI_ENDPOINT,
+            azure_deployment=settings.OPENAI_DEPLOYMENT_NAME,
+            api_version=settings.OPENAI_API_VERSION,
+            api_key=settings.OPENAI_API_KEY,
+            temperature=settings.TEMPERATURE,
         )
     
     def generate_question(self, prompt: str) -> str:

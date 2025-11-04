@@ -3,7 +3,7 @@ LangGraph workflow for orchestrating the AI interview.
 """
 from typing import Dict, Any, Literal
 from langgraph.graph import StateGraph, END
-from config.settings import Settings
+from config import settings
 from src.agents import TechnicalAgent, HRAgent, ManagerAgent
 from src.graph.state import InterviewState, Message, QuestionAnswer
 
@@ -11,17 +11,11 @@ from src.graph.state import InterviewState, Message, QuestionAnswer
 class InterviewWorkflow:
     """Manages the interview workflow using LangGraph."""
     
-    def __init__(self, settings: Settings):
-        """
-        Initialize the interview workflow.
-        
-        Args:
-            settings: Application settings
-        """
-        self.settings = settings
-        self.technical_agent = TechnicalAgent(settings)
-        self.hr_agent = HRAgent(settings)
-        self.manager_agent = ManagerAgent(settings)
+    def __init__(self):
+        """Initialize the interview workflow."""
+        self.technical_agent = TechnicalAgent()
+        self.hr_agent = HRAgent()
+        self.manager_agent = ManagerAgent()
         self.graph = self._create_graph()
     
     def _create_graph(self) -> StateGraph:
@@ -169,7 +163,7 @@ class InterviewWorkflow:
         Returns:
             str: Next node to visit
         """
-        if state["technical_questions_asked"] >= self.settings.max_technical_questions:
+        if state["technical_questions_asked"] >= settings.MAX_TECHNICAL_QUESTIONS:
             return "hr"
         
         # Check if we have an answer to process
@@ -190,7 +184,7 @@ class InterviewWorkflow:
         Returns:
             str: Next node to visit
         """
-        if state["hr_questions_asked"] >= self.settings.max_hr_questions:
+        if state["hr_questions_asked"] >= settings.MAX_HR_QUESTIONS:
             return "manager"
         
         # Check if we have an answer to process
@@ -211,7 +205,7 @@ class InterviewWorkflow:
         Returns:
             str: Next node to visit
         """
-        if state["manager_questions_asked"] >= self.settings.max_manager_questions:
+        if state["manager_questions_asked"] >= settings.MAX_MANAGER_QUESTIONS:
             state["is_complete"] = True
             state["current_agent"] = "complete"
             return "end"

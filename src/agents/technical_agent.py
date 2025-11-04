@@ -5,21 +5,17 @@ from typing import Dict, Any
 from .base_agent import BaseAgent
 from src.prompts.templates import get_agent_prompt
 from src.graph.state import InterviewState
+from config import settings
 
 
 class TechnicalAgent(BaseAgent):
     """Agent responsible for asking technical questions."""
     
-    def __init__(self, settings):
-        """
-        Initialize the Technical Agent.
-        
-        Args:
-            settings: Application settings
-        """
-        super().__init__(settings)
+    def __init__(self):
+        """Initialize the Technical Agent."""
+        super().__init__()
         self.agent_type = "technical"
-        self.max_questions = settings.max_technical_questions
+        self.max_questions = settings.MAX_TECHNICAL_QUESTIONS
     
     def ask_question(self, state: InterviewState) -> str:
         """

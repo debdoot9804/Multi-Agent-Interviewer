@@ -3,12 +3,11 @@ Main application entry point for the AI Interviewer.
 """
 import sys
 import os
-from dotenv import load_dotenv
 
-# Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+# Add project root to path
+sys.path.insert(0, os.path.dirname(__file__))
 
-from config import get_settings
+from config import settings
 from src.graph.state import create_initial_state, Message
 from src.graph.workflow import InterviewWorkflow
 from src.utils import (
@@ -52,12 +51,6 @@ def get_candidate_info() -> tuple[str, str]:
 def run_interview():
     """Main function to run the interview."""
     try:
-        # Load environment variables
-        load_dotenv()
-        
-        # Get settings
-        settings = get_settings()
-        
         # Get candidate information
         candidate_name, job_role = get_candidate_info()
         
@@ -65,7 +58,7 @@ def run_interview():
         state = create_initial_state(candidate_name, job_role)
         
         # Create workflow
-        workflow = InterviewWorkflow(settings)
+        workflow = InterviewWorkflow()
         
         # Track current agent for UI
         current_agent_type = None
@@ -91,13 +84,13 @@ def run_interview():
                 # Determine question number and max for current agent
                 if agent_type == "technical":
                     q_num = state["technical_questions_asked"]
-                    max_q = settings.max_technical_questions
+                    max_q = settings.MAX_TECHNICAL_QUESTIONS
                 elif agent_type == "hr":
                     q_num = state["hr_questions_asked"]
-                    max_q = settings.max_hr_questions
+                    max_q = settings.MAX_HR_QUESTIONS
                 else:  # manager
                     q_num = state["manager_questions_asked"]
-                    max_q = settings.max_manager_questions
+                    max_q = settings.MAX_MANAGER_QUESTIONS
                 
                 print_question(state["current_question"], q_num, max_q)
                 

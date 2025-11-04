@@ -17,12 +17,7 @@ wheels/
 .env
 .venv
 
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+
 
 # OS
 .DS_Store

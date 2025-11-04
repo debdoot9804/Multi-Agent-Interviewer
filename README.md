@@ -41,8 +41,9 @@ AI_Interviewer/
 │   ├── utils/
 │   │   ├── __init__.py
 │   │   └── helpers.py       # Utility functions
-│   └── main.py              # Application entry point
+│   └── __init__.py
 ├── tests/
+├── main.py                  # Application entry point
 ├── .env                     # Environment variables (not in git)
 ├── .gitignore
 ├── requirements.txt
@@ -97,7 +98,7 @@ AI_Interviewer/
 ### Running the Interview
 
 ```bash
-python src/main.py
+python main.py
 ```
 
 ### Interview Flow
