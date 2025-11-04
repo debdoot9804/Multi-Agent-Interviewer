@@ -37,11 +37,12 @@ class InterviewState(TypedDict):
         is_complete: Whether the interview is complete
         current_question: The current question being asked
         last_answer: The last answer provided by the candidate
+        evaluation: AI-generated evaluation results (score, feedback, etc.)
     """
     candidate_name: str
     job_role: str
     experience_level: str
-    current_agent: Literal["technical", "hr", "manager", "complete"]
+    current_agent: Literal["technical", "hr", "manager", "complete", "evaluation"]
     technical_questions_asked: int
     hr_questions_asked: int
     manager_questions_asked: int
@@ -50,6 +51,7 @@ class InterviewState(TypedDict):
     is_complete: bool
     current_question: Optional[str]
     last_answer: Optional[str]
+    evaluation: Optional[Dict]
 
 
 def create_initial_state(candidate_name: str, job_role: str, experience_level: str) -> InterviewState:
@@ -77,4 +79,5 @@ def create_initial_state(candidate_name: str, job_role: str, experience_level: s
         "is_complete": False,
         "current_question": None,
         "last_answer": None,
+        "evaluation": None,
     }

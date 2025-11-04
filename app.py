@@ -359,10 +359,11 @@ def show_interview_screen():
                     if (state['technical_questions_asked'] >= settings.MAX_TECHNICAL_QUESTIONS and
                         state['hr_questions_asked'] >= settings.MAX_HR_QUESTIONS and
                         state['manager_questions_asked'] >= settings.MAX_MANAGER_QUESTIONS):
-                        state['is_complete'] = True
-                        state['current_agent'] = 'complete'
-                        st.session_state.interview_state = state
-                        st.success("🎉 Interview Complete! Generating your results...")
+                        # Trigger evaluation node
+                        with st.spinner("🤖 AI is evaluating your interview performance..."):
+                            state = workflow.run_step(state)
+                            st.session_state.interview_state = state
+                        st.success("🎉 Interview Complete! Your results are ready!")
                     else:
                         # Run the next step to generate the next question
                         state = workflow.run_step(state)
@@ -451,43 +452,94 @@ def show_results_screen():
     st.markdown('<h1 class="main-header">🎉 Interview Complete!</h1>', unsafe_allow_html=True)
     st.markdown(f'<p class="sub-header">Thank you, {state["candidate_name"]}!</p>', unsafe_allow_html=True)
     
-    # Calculate score
-    score = calculate_interview_score(state['qa_pairs'])
-    
-    # Score card
-    score_class = "excellent-score" if score >= 80 else "good-score" if score >= 60 else "average-score"
-    
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.markdown(f"""
-        <div class="score-card {score_class}">
-            <h1 style="font-size: 4rem; margin: 0;">{score}</h1>
-            <h3>Overall Score</h3>
-            <p>out of 100</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Feedback
-    feedback = generate_feedback(state['qa_pairs'], score)
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("### 💪 Strengths")
-        if feedback["strengths"]:
-            for strength in feedback["strengths"]:
-                st.success(f"✓ {strength}")
-        else:
-            st.info("Keep practicing to develop your strengths!")
-    
-    with col2:
-        st.markdown("### 📈 Areas for Improvement")
-        if feedback["weaknesses"]:
-            for weakness in feedback["weaknesses"]:
-                st.warning(f"○ {weakness}")
-        if feedback["suggestions"]:
-            for suggestion in feedback["suggestions"]:
-                st.info(f"💡 {suggestion}")
+    # Check if AI evaluation is available
+    if state.get('evaluation'):
+        # Use AI-generated evaluation
+        evaluation = state['evaluation']
+        score = evaluation.get('score', 0)
+        
+        # Score card
+        score_class = "excellent-score" if score >= 80 else "good-score" if score >= 60 else "average-score"
+        
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.markdown(f"""
+            <div class="score-card {score_class}">
+                <h1 style="font-size: 4rem; margin: 0;">{score}</h1>
+                <h3>Overall Score</h3>
+                <p>out of 100</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # AI-Generated Feedback
+        st.markdown("---")
+        
+        # Overall Feedback
+        if evaluation.get('overall_feedback'):
+            st.markdown("### 📝 Overall Feedback")
+            st.info(evaluation['overall_feedback'])
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("### 💪 Strengths")
+            if evaluation.get("strengths"):
+                for strength in evaluation["strengths"]:
+                    st.success(f"✓ {strength}")
+            else:
+                st.info("Keep working on building your strengths!")
+            
+            st.markdown("### 🎯 Suggestions")
+            if evaluation.get("suggestions"):
+                for suggestion in evaluation["suggestions"]:
+                    st.info(f"💡 {suggestion}")
+            else:
+                st.success("Great job! Keep up the good work!")
+        
+        with col2:
+            st.markdown("### 🔧 Areas for Improvement")
+            if evaluation.get("weaknesses"):
+                for weakness in evaluation["weaknesses"]:
+                    st.warning(f"⚠️ {weakness}")
+            else:
+                st.success("Excellent performance across the board!")
+    else:
+        # Fallback to simple calculation if evaluation not available
+        score = calculate_interview_score(state['qa_pairs'])
+        feedback = generate_feedback(state['qa_pairs'], score)
+        
+        # Score card
+        score_class = "excellent-score" if score >= 80 else "good-score" if score >= 60 else "average-score"
+        
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.markdown(f"""
+            <div class="score-card {score_class}">
+                <h1 style="font-size: 4rem; margin: 0;">{score}</h1>
+                <h3>Overall Score</h3>
+                <p>out of 100</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # Feedback
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("### 💪 Strengths")
+            if feedback["strengths"]:
+                for strength in feedback["strengths"]:
+                    st.success(f"✓ {strength}")
+            else:
+                st.info("Keep practicing to develop your strengths!")
+        
+        with col2:
+            st.markdown("### 📈 Areas for Improvement")
+            if feedback["weaknesses"]:
+                for weakness in feedback["weaknesses"]:
+                    st.warning(f"○ {weakness}")
+            if feedback["suggestions"]:
+                for suggestion in feedback["suggestions"]:
+                    st.info(f"💡 {suggestion}")
     
     st.markdown("---")
     

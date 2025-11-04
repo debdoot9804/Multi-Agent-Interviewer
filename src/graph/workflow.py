@@ -4,7 +4,7 @@ LangGraph workflow for orchestrating the AI interview.
 from typing import Dict, Any, Literal
 from langgraph.graph import StateGraph, END
 from config import settings
-from src.agents import TechnicalAgent, HRAgent, ManagerAgent
+from src.agents import TechnicalAgent, HRAgent, ManagerAgent, EvaluationAgent
 from src.graph.state import InterviewState, Message, QuestionAnswer
 
 
@@ -16,6 +16,7 @@ class InterviewWorkflow:
         self.technical_agent = TechnicalAgent()
         self.hr_agent = HRAgent()
         self.manager_agent = ManagerAgent()
+        self.evaluation_agent = EvaluationAgent()
         self.graph = self._create_graph()
     
     def _create_graph(self) -> StateGraph:
@@ -32,6 +33,7 @@ class InterviewWorkflow:
         workflow.add_node("technical", self._technical_node)
         workflow.add_node("hr", self._hr_node)
         workflow.add_node("manager", self._manager_node)
+        workflow.add_node("evaluation", self._evaluation_node)
         
         # Add conditional edges to determine flow
         workflow.add_conditional_edges(
@@ -58,10 +60,14 @@ class InterviewWorkflow:
             "manager",
             self._route_from_manager,
             {
+                "evaluation": "evaluation",
                 "continue": "manager",
                 "end": END
             }
         )
+        
+        # Evaluation node always ends
+        workflow.add_edge("evaluation", END)
         
         # Set entry point
         workflow.set_entry_point("technical")
@@ -151,6 +157,26 @@ class InterviewWorkflow:
         
         return state
     
+    def _evaluation_node(self, state: InterviewState) -> InterviewState:
+        """
+        Evaluation node - generates comprehensive feedback.
+        
+        Args:
+            state: Current interview state
+            
+        Returns:
+            InterviewState: Updated state with evaluation
+        """
+        # Generate evaluation using the evaluation agent
+        evaluation = self.evaluation_agent.generate_evaluation(state)
+        
+        # Update state
+        state["evaluation"] = evaluation
+        state["is_complete"] = True
+        state["current_agent"] = "evaluation"
+        
+        return state
+    
     def _route_from_technical(
         self, state: InterviewState
     ) -> Literal["hr", "continue", "end"]:
@@ -199,7 +225,7 @@ class InterviewWorkflow:
     
     def _route_from_manager(
         self, state: InterviewState
-    ) -> Literal["continue", "end"]:
+    ) -> Literal["evaluation", "continue", "end"]:
         """
         Determine routing after manager questions.
         
@@ -209,11 +235,9 @@ class InterviewWorkflow:
         Returns:
             str: Next node to visit
         """
-        # If we've asked all manager questions, complete the interview
+        # If we've asked all manager questions, go to evaluation
         if state["manager_questions_asked"] >= settings.MAX_MANAGER_QUESTIONS:
-            state["is_complete"] = True
-            state["current_agent"] = "complete"
-            return "end"
+            return "evaluation"
         
         # If we just asked a question (current_question is set), stop here
         if state.get("current_question"):
