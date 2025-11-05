@@ -51,25 +51,51 @@ st.set_page_config(
 # Custom CSS for professional look
 st.markdown("""
 <style>
+    /* Main background gradient - softer blue/teal theme */
+    .stApp {
+        background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+        background-attachment: fixed;
+    }
+    
+    /* Content area styling */
+    .main .block-container {
+        background: rgba(255, 255, 255, 0.98);
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+    }
+    
+    /* Sidebar styling */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    }
+    
+    [data-testid="stSidebar"] * {
+        color: white !important;
+    }
+    
     .main-header {
         font-size: 3rem;
         font-weight: bold;
         text-align: center;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #ffffff;
+        text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
         margin-bottom: 1rem;
+        padding: 1rem 0;
     }
     .sub-header {
         text-align: center;
-        color: #666;
+        color: #e0e0e0;
         margin-bottom: 2rem;
+        font-size: 1.2rem;
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
     }
     .agent-card {
         padding: 1.5rem;
         border-radius: 10px;
         margin-bottom: 1rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
     .technical-card {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -113,6 +139,34 @@ st.markdown("""
     }
     .stProgress > div > div > div > div {
         background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    /* Input field styling */
+    .stTextInput > div > div > input,
+    .stSelectbox > div > div > select,
+    .stTextArea > div > div > textarea {
+        border-radius: 8px;
+        border: 2px solid #e0e0e0;
+    }
+    
+    /* Button styling */
+    .stButton > button {
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* File uploader styling */
+    [data-testid="stFileUploader"] {
+        background: rgba(102, 126, 234, 0.05);
+        border-radius: 10px;
+        padding: 1rem;
+        border: 2px dashed #667eea;
     }
 </style>
 """, unsafe_allow_html=True)
