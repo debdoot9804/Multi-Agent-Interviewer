@@ -12,6 +12,15 @@ import io
 # Add project root to path
 sys.path.insert(0, os.path.dirname(__file__))
 
+# Load Streamlit secrets to environment variables (for cloud deployment)
+if hasattr(st, 'secrets'):
+    try:
+        for key, value in st.secrets.items():
+            if key not in os.environ:
+                os.environ[key] = str(value)
+    except Exception as e:
+        st.warning(f"Could not load secrets: {e}")
+
 # Setup logging before importing other modules
 from config.logging_config import setup_logging, get_logger
 setup_logging(log_to_file=True)
@@ -383,7 +392,7 @@ st.markdown("""
 # Job roles and experience levels
 JOB_ROLES = [
     "Software Engineer",
-    "Senior Software Engineer",
+    "Data Engineer",
     "Data Scientist",
     "Machine Learning Engineer",
     "DevOps Engineer",
