@@ -51,24 +51,25 @@ st.set_page_config(
 # Custom CSS for professional look
 st.markdown("""
 <style>
-    /* Main background gradient - softer blue/teal theme */
+    /* Light, clean background */
     .stApp {
-        background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+        background: linear-gradient(135deg, #e0f2fe 0%, #ddd6fe 50%, #fce7f3 100%);
         background-attachment: fixed;
     }
     
-    /* Content area styling */
+    /* Content area - pure white */
     .main .block-container {
-        background: rgba(255, 255, 255, 0.98);
+        background: #ffffff;
         padding: 2rem;
         border-radius: 15px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        max-width: 1200px;
+        margin: 0 auto;
     }
     
     /* Sidebar styling */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        background: linear-gradient(180deg, #3b82f6 0%, #8b5cf6 100%);
     }
     
     [data-testid="stSidebar"] * {
@@ -76,97 +77,304 @@ st.markdown("""
     }
     
     .main-header {
-        font-size: 3rem;
-        font-weight: bold;
+        font-size: 2.5rem;
+        font-weight: 700;
         text-align: center;
-        color: #ffffff;
-        text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
-        margin-bottom: 1rem;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
         padding: 1rem 0;
     }
+    
     .sub-header {
         text-align: center;
-        color: #e0e0e0;
+        color: #475569;
         margin-bottom: 2rem;
-        font-size: 1.2rem;
-        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+        font-size: 1.1rem;
+        font-weight: 400;
     }
+    
     .agent-card {
         padding: 1.5rem;
-        border-radius: 10px;
+        border-radius: 12px;
         margin-bottom: 1rem;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     }
+    
     .technical-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
         color: white;
     }
+    
     .hr-card {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
         color: white;
     }
+    
     .manager-card {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%);
         color: white;
     }
+    
     .question-box {
-        background-color: #f8f9fa;
+        background: #f8fafc;
         padding: 1.5rem;
-        border-radius: 8px;
-        border-left: 4px solid #667eea;
+        border-radius: 12px;
+        border-left: 5px solid #3b82f6;
         margin: 1rem 0;
-        color: #2c3e50;
+        color: #1e293b;
         font-size: 1.1rem;
-        line-height: 1.6;
+        line-height: 1.8;
+        font-weight: 500;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
+    
     .score-card {
         padding: 2rem;
-        border-radius: 10px;
+        border-radius: 12px;
         text-align: center;
         margin: 1rem 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     }
+    
     .excellent-score {
-        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        background: linear-gradient(135deg, #10b981 0%, #22c55e 100%);
         color: white;
     }
+    
     .good-score {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
         color: white;
     }
+    
     .average-score {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
         color: white;
     }
+    
     .stProgress > div > div > div > div {
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
     }
     
-    /* Input field styling */
+    /* Form elements - clean white with dark text */
     .stTextInput > div > div > input,
-    .stSelectbox > div > div > select,
     .stTextArea > div > div > textarea {
-        border-radius: 8px;
-        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        border: 2px solid #e2e8f0;
+        background-color: #fefce8 !important;
+        color: #0f172a !important;
+        font-size: 1rem;
+        padding: 0.75rem;
+        transition: all 0.3s ease;
+        font-weight: 500;
     }
     
-    /* Button styling */
+    /* Selectbox - WHITE background with dark text */
+    .stSelectbox [data-baseweb="select"] {
+        background-color: #ffffff !important;
+    }
+    
+    .stSelectbox [data-baseweb="select"] > div {
+        background-color: #ffffff !important;
+        border: 2px solid #e2e8f0 !important;
+        border-radius: 10px !important;
+    }
+    
+    .stSelectbox [data-baseweb="select"] > div:hover {
+        border-color: #3b82f6 !important;
+    }
+    
+    .stSelectbox [data-baseweb="select"] input {
+        color: #0f172a !important;
+    }
+    
+    .stSelectbox [data-baseweb="select"] span {
+        color: #0f172a !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Dropdown menu when opened */
+    [data-baseweb="popover"] {
+        background-color: #ffffff !important;
+    }
+    
+    [role="listbox"] {
+        background-color: #ffffff !important;
+    }
+    
+    [role="option"] {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+        font-weight: 500 !important;
+    }
+    
+    [role="option"]:hover {
+        background-color: #f1f5f9 !important;
+        color: #0f172a !important;
+    }
+    
+    .stTextInput > div > div > input:focus,
+    .stTextArea > div > div > textarea:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        outline: none;
+    }
+    
+    /* Dropdown arrow area */
+    .stSelectbox svg {
+        color: #3b82f6 !important;
+    }
+    
+    /* Labels - dark and clear */
+    label {
+        color: #1e293b !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Text elements - dark for readability */
+    .stMarkdown {
+        color: #1e293b;
+    }
+    
+    p, span, div {
+        color: #334155;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        color: #0f172a !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Radio buttons - clear labels */
+    .stRadio > label {
+        color: #1e293b !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+    }
+    
+    .stRadio > div {
+        color: #1e293b !important;
+    }
+    
+    .stRadio > div > label {
+        color: #334155 !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Buttons - vibrant and clear */
     .stButton > button {
-        border-radius: 8px;
+        border-radius: 10px;
         font-weight: 600;
+        font-size: 1.05rem;
+        padding: 0.75rem 2rem;
         transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        color: white;
     }
     
     .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
     }
     
-    /* File uploader styling */
+    /* File uploader - light background */
     [data-testid="stFileUploader"] {
-        background: rgba(102, 126, 234, 0.05);
-        border-radius: 10px;
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 2px dashed #cbd5e0;
+        transition: all 0.3s ease;
+    }
+    
+    [data-testid="stFileUploader"]:hover {
+        border-color: #3b82f6;
+        background: #f1f5f9;
+    }
+    
+    [data-testid="stFileUploader"] label {
+        color: #1e293b !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Success/Error messages */
+    .stSuccess {
+        background-color: #f0fdf4 !important;
+        color: #166534 !important;
         padding: 1rem;
-        border: 2px dashed #667eea;
+        border-radius: 8px;
+    }
+    
+    .stError {
+        background-color: #fef2f2 !important;
+        color: #991b1b !important;
+        padding: 1rem;
+        border-radius: 8px;
+    }
+    
+    /* Expander - clean styling */
+    .streamlit-expanderHeader {
+        background-color: #f8fafc !important;
+        color: #1e293b !important;
+        border-radius: 8px;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .main-header {
+            font-size: 1.75rem;
+            padding: 0.5rem 0;
+        }
+        
+        .sub-header {
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .main .block-container {
+            padding: 1.25rem;
+        }
+        
+        .agent-card {
+            padding: 1.25rem;
+        }
+        
+        .question-box {
+            font-size: 1rem;
+            padding: 1.25rem;
+            line-height: 1.6;
+        }
+        
+        label {
+            font-size: 0.95rem !important;
+        }
+        
+        .stButton > button {
+            font-size: 1rem;
+            padding: 0.65rem 1.5rem;
+            width: 100%;
+        }
+        
+        .stTextInput > div > div > input,
+        .stSelectbox > div > div > select,
+        .stTextArea > div > div > textarea {
+            font-size: 16px; /* Prevents zoom on iOS */
+        }
+    }
+    
+    /* Tablet responsiveness */
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .main-header {
+            font-size: 2.25rem;
+        }
+        
+        .main .block-container {
+            padding: 1.75rem;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
