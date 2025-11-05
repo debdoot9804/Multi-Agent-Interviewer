@@ -126,20 +126,6 @@ Visit the app to experience:
 - Detailed feedback sections with icons and formatting
 - Comprehensive logging for debugging and monitoring
 
-## 🏗️ Architecture
-
-### LangGraph Workflow
-
-The system uses LangGraph to orchestrate a multi-agent interview process with AI evaluation:
-
-```mermaid
-flowchart LR
-    A[🎬 Start] --> B[💻 Technical Agent<br/>Alex]
-    B --> C[🤝 HR Agent<br/>Olivia]
-    C --> D[👔 Manager Agent<br/>Rahul]
-    D --> E[🎯 Evaluation Agent]
-    E --> F[✅ Results]
-```
 
 **Interview Workflow:**
 
@@ -180,21 +166,12 @@ Each agent:
 
 ## 🛠️ Technical Components
 
-### Logging System
-- **File Handler**: Writes detailed DEBUG logs to `logs/ai_interviewer_TIMESTAMP.log`
-- **Console Handler**: Displays INFO level logs to terminal
-- **Module-Level Loggers**: Each module has its own logger for granular tracking
-- **HTTP Noise Reduction**: Suppresses verbose logs from httpx, httpcore, openai libraries
-- **Automatic Directory Creation**: `logs/` directory created automatically if needed
-
 ### Document Processing
 - **PDF Support**: PyPDF2 for extracting text from PDF resumes
 - **DOCX Support**: python-docx for parsing Word documents
 - **TXT Support**: Native text file reading
 - **Character Limit**: Resume text limited to first 2000 characters for context injection
 - **Error Handling**: Graceful fallback if resume parsing fails
-
-
 
 
 ## 👤 Author
