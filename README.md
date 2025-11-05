@@ -132,40 +132,33 @@ Visit the app to experience:
 
 The system uses LangGraph to orchestrate a multi-agent interview process with AI evaluation:
 
+```mermaid
+graph TD
+    A[Start Interview] --> B[Technical Agent - Alex]
+    B -->|6 Questions| C[Technical Round Complete]
+    C --> D[HR Agent - Olivia]
+    D -->|3 Questions| E[HR Round Complete]
+    E --> F[Manager Agent - Rahul]
+    F -->|2 Questions| G[Manager Round Complete]
+    G --> H[Evaluation Agent]
+    H -->|Analysis & Scoring| I[End - Display Results]
+    
+    style A fill:#667eea,stroke:#333,stroke-width:2px,color:#fff
+    style B fill:#667eea,stroke:#333,stroke-width:2px,color:#fff
+    style D fill:#f093fb,stroke:#333,stroke-width:2px,color:#fff
+    style F fill:#4facfe,stroke:#333,stroke-width:2px,color:#fff
+    style H fill:#11998e,stroke:#333,stroke-width:2px,color:#fff
+    style I fill:#38ef7d,stroke:#333,stroke-width:2px,color:#fff
 ```
-┌─────────────┐
-│    Start    │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│ Technical   │──► Alex asks 6 technical questions
-│   Agent     │    (Coding, system design, algorithms)
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  HR Agent   │──► Olivia asks 3 HR questions
-│             │    (Cultural fit, soft skills)
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  Manager    │──► Rahul asks 2 managerial questions
-│   Agent     │    (Leadership, strategy, vision)
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│ Evaluation  │──► AI analyzes entire interview
-│   Agent     │    (Score, strengths, weaknesses, suggestions)
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│     End     │──► Display comprehensive results
-└─────────────┘
-```
+
+**Workflow Details:**
+- **Technical Agent (Alex)**: Asks 6 technical questions about coding, system design, and algorithms
+- **HR Agent (Olivia)**: Asks 3 questions about cultural fit, soft skills, and teamwork
+- **Manager Agent (Rahul)**: Asks 2 questions about leadership, strategy, and career vision
+- **Evaluation Agent**: Analyzes entire interview and provides score, strengths, weaknesses, and suggestions
+- **Results**: Comprehensive evaluation with actionable feedback
+
+### State Management
 
 ### Agent Design
 
