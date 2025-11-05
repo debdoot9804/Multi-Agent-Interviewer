@@ -28,6 +28,7 @@ class InterviewState(TypedDict):
         candidate_name: Name of the candidate
         job_role: Job role being interviewed for
         experience_level: Experience level (Junior/Mid-Level/Senior)
+        resume_text: Optional resume text extracted from uploaded file
         current_agent: Current agent conducting the interview
         technical_questions_asked: Number of technical questions asked
         hr_questions_asked: Number of HR questions asked
@@ -42,6 +43,7 @@ class InterviewState(TypedDict):
     candidate_name: str
     job_role: str
     experience_level: str
+    resume_text: Optional[str]
     current_agent: Literal["technical", "hr", "manager", "complete", "evaluation"]
     technical_questions_asked: int
     hr_questions_asked: int
@@ -54,7 +56,12 @@ class InterviewState(TypedDict):
     evaluation: Optional[Dict]
 
 
-def create_initial_state(candidate_name: str, job_role: str, experience_level: str) -> InterviewState:
+def create_initial_state(
+    candidate_name: str, 
+    job_role: str, 
+    experience_level: str,
+    resume_text: Optional[str] = None
+) -> InterviewState:
     """
     Create the initial state for an interview.
     
@@ -62,6 +69,7 @@ def create_initial_state(candidate_name: str, job_role: str, experience_level: s
         candidate_name: Name of the candidate
         job_role: Job role being interviewed for
         experience_level: Experience level (Junior/Mid-Level/Senior)
+        resume_text: Optional resume text extracted from uploaded file
         
     Returns:
         InterviewState: Initial state for the interview
@@ -70,6 +78,7 @@ def create_initial_state(candidate_name: str, job_role: str, experience_level: s
         "candidate_name": candidate_name,
         "job_role": job_role,
         "experience_level": experience_level,
+        "resume_text": resume_text,
         "current_agent": "technical",
         "technical_questions_asked": 0,
         "hr_questions_asked": 0,

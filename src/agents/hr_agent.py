@@ -43,7 +43,8 @@ class HRAgent(BaseAgent):
             experience_level=state["experience_level"],
             question_number=question_number,
             conversation_history=conversation_history,
-            is_first_question=is_first
+            is_first_question=is_first,
+            resume_text=state.get("resume_text")
         )
         
         # Generate the question

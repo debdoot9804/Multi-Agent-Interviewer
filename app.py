@@ -7,12 +7,37 @@ import streamlit as st
 import sys
 import os
 from datetime import datetime
+import io
 
 # Add project root to path
 sys.path.insert(0, os.path.dirname(__file__))
 
+# Setup logging before importing other modules
+from config.logging_config import setup_logging, get_logger
+setup_logging(log_to_file=True)
+logger = get_logger(__name__)
+
 from src.graph.state import create_initial_state, Message, QuestionAnswer
 from src.graph.workflow import InterviewWorkflow
+
+# Document processing imports
+try:
+    import PyPDF2
+    PDF_SUPPORT = True
+except ImportError:
+    PDF_SUPPORT = False
+    logger.warning("PyPDF2 not installed - PDF resume upload disabled")
+
+try:
+    import docx
+    DOCX_SUPPORT = True
+except ImportError:
+    DOCX_SUPPORT = False
+    logger.warning("python-docx not installed - DOCX resume upload disabled")
+
+logger.info("="*60)
+logger.info("AI Interviewer Streamlit Application Started")
+logger.info("="*60)
 
 
 # Page configuration
@@ -111,6 +136,68 @@ JOB_ROLES = [
 EXPERIENCE_LEVELS = ["Junior", "Mid-Level", "Senior"]
 
 
+def extract_text_from_pdf(file):
+    """Extract text from PDF file."""
+    if not PDF_SUPPORT:
+        return None
+    
+    try:
+        pdf_reader = PyPDF2.PdfReader(file)
+        text = ""
+        for page in pdf_reader.pages:
+            text += page.extract_text() + "\n"
+        logger.info(f"Successfully extracted {len(text)} characters from PDF resume")
+        return text.strip()
+    except Exception as e:
+        logger.error(f"Error extracting PDF text: {e}")
+        return None
+
+
+def extract_text_from_docx(file):
+    """Extract text from DOCX file."""
+    if not DOCX_SUPPORT:
+        return None
+    
+    try:
+        doc = docx.Document(file)
+        text = "\n".join([paragraph.text for paragraph in doc.paragraphs])
+        logger.info(f"Successfully extracted {len(text)} characters from DOCX resume")
+        return text.strip()
+    except Exception as e:
+        logger.error(f"Error extracting DOCX text: {e}")
+        return None
+
+
+def extract_text_from_txt(file):
+    """Extract text from TXT file."""
+    try:
+        text = file.read().decode('utf-8')
+        logger.info(f"Successfully extracted {len(text)} characters from TXT resume")
+        return text.strip()
+    except Exception as e:
+        logger.error(f"Error extracting TXT text: {e}")
+        return None
+
+
+def process_resume_upload(uploaded_file):
+    """Process uploaded resume file and extract text."""
+    if uploaded_file is None:
+        return None
+    
+    file_type = uploaded_file.name.split('.')[-1].lower()
+    logger.info(f"Processing resume upload: {uploaded_file.name} (type: {file_type})")
+    
+    if file_type == 'pdf':
+        return extract_text_from_pdf(uploaded_file)
+    elif file_type in ['docx', 'doc']:
+        return extract_text_from_docx(uploaded_file)
+    elif file_type == 'txt':
+        return extract_text_from_txt(uploaded_file)
+    else:
+        logger.warning(f"Unsupported file type: {file_type}")
+        return None
+
+
 def initialize_session_state():
     """Initialize Streamlit session state."""
     if 'stage' not in st.session_state:
@@ -129,6 +216,8 @@ def initialize_session_state():
         st.session_state.current_answer = ''
     if 'interview_started' not in st.session_state:
         st.session_state.interview_started = False
+    if 'resume_text' not in st.session_state:
+        st.session_state.resume_text = None
 
 
 def show_welcome_screen():
@@ -201,14 +290,47 @@ def show_welcome_screen():
             key="exp_level"
         )
         
+        # Resume Upload Section
+        st.markdown("#### 📄 Resume Upload (Optional)")
+        st.markdown("Upload your resume to help the AI ask more personalized questions based on your experience.")
+        
+        supported_formats = []
+        if PDF_SUPPORT:
+            supported_formats.append("pdf")
+        if DOCX_SUPPORT:
+            supported_formats.extend(["docx", "doc"])
+        supported_formats.append("txt")
+        
+        uploaded_file = st.file_uploader(
+            "Choose your resume file",
+            type=supported_formats,
+            help=f"Supported formats: {', '.join(supported_formats).upper()}",
+            key="resume_upload"
+        )
+        
+        resume_text = None
+        if uploaded_file is not None:
+            with st.spinner("Processing your resume..."):
+                resume_text = process_resume_upload(uploaded_file)
+                if resume_text:
+                    st.success(f"✅ Resume processed successfully! ({len(resume_text)} characters extracted)")
+                    with st.expander("📝 Preview extracted text"):
+                        st.text_area("Resume Content", resume_text[:1000] + ("..." if len(resume_text) > 1000 else ""), height=200, disabled=True)
+                else:
+                    st.error("❌ Failed to process resume. Please try a different file or continue without it.")
+        
         st.markdown("---")
         
         # Start Button
         if st.button("🚀 Start Interview", type="primary", use_container_width=True):
             if candidate_name and job_role:
+                resume_status = "with resume" if resume_text else "without resume"
+                logger.info(f"Starting new interview - Candidate: {candidate_name}, Role: {job_role}, Level: {experience_level}, {resume_status}")
+                
                 st.session_state.candidate_name = candidate_name
                 st.session_state.job_role = job_role
                 st.session_state.experience_level = experience_level
+                st.session_state.resume_text = resume_text
                 st.session_state.stage = 'interview'
                 st.session_state.interview_started = True
                 
@@ -216,9 +338,11 @@ def show_welcome_screen():
                 st.session_state.interview_state = create_initial_state(
                     candidate_name=candidate_name,
                     job_role=job_role,
-                    experience_level=experience_level
+                    experience_level=experience_level,
+                    resume_text=resume_text
                 )
                 st.session_state.workflow = InterviewWorkflow()
+                logger.info("Interview state and workflow initialized")
                 
                 st.rerun()
             else:
@@ -349,6 +473,7 @@ def show_interview_screen():
             
         if submit_clicked:
             if answer.strip():
+                logger.info(f"Answer submitted for {current_agent} - Question {q_num} (length: {len(answer)} chars)")
                 with st.spinner("Processing your answer..."):
                     # Process the answer
                     state = workflow.process_answer(state, answer)
@@ -360,17 +485,21 @@ def show_interview_screen():
                         state['hr_questions_asked'] >= settings.MAX_HR_QUESTIONS and
                         state['manager_questions_asked'] >= settings.MAX_MANAGER_QUESTIONS):
                         # Trigger evaluation node
+                        logger.info("All questions completed - triggering AI evaluation")
                         with st.spinner("🤖 AI is evaluating your interview performance..."):
                             state = workflow.run_step(state)
                             st.session_state.interview_state = state
+                        logger.info("Interview evaluation completed successfully")
                         st.success("🎉 Interview Complete! Your results are ready!")
                     else:
                         # Run the next step to generate the next question
+                        logger.debug(f"Generating next question - Current state: Tech={state['technical_questions_asked']}, HR={state['hr_questions_asked']}, Manager={state['manager_questions_asked']}")
                         state = workflow.run_step(state)
                         st.session_state.interview_state = state
                         
                 st.rerun()
             else:
+                logger.warning("Empty answer submission attempt")
                 st.error("Please provide an answer before submitting!")
     
     else:

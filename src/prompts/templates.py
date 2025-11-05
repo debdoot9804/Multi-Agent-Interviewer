@@ -151,7 +151,8 @@ def get_agent_prompt(
     experience_level: str,
     question_number: int,
     conversation_history: str,
-    is_first_question: bool = False
+    is_first_question: bool = False,
+    resume_text: str = None
 ) -> str:
     """
     Get the appropriate prompt for an agent.
@@ -164,6 +165,7 @@ def get_agent_prompt(
         question_number: Current question number for this agent
         conversation_history: Recent conversation context
         is_first_question: Whether this is the agent's first question
+        resume_text: Optional resume text for personalized questions
         
     Returns:
         str: Formatted prompt for the agent
@@ -185,10 +187,19 @@ def get_agent_prompt(
     
     prompt_template = prompts[agent_type]["first" if is_first_question else "regular"]
     
-    return prompt_template.format(
+    # Add resume context if available
+    resume_context = ""
+    if resume_text:
+        # Limit resume text to first 2000 characters to avoid token limits
+        truncated_resume = resume_text[:2000]
+        resume_context = f"\n\nCANDIDATE'S RESUME:\n{truncated_resume}\n{'...(resume continues)' if len(resume_text) > 2000 else ''}\n\nUse this resume information to ask more personalized and relevant questions based on the candidate's actual experience and skills."
+    
+    formatted_prompt = prompt_template.format(
         candidate_name=candidate_name,
         job_role=job_role,
         experience_level=experience_level,
         question_number=question_number,
         conversation_history=conversation_history
     )
+    
+    return formatted_prompt + resume_context
