@@ -4,23 +4,23 @@ langchain
 langchain-openai
 
 # Azure OpenAI Support
-openai>=1.0.0
+openai
 
 # Environment management
-python-dotenv>=1.0.0
+python-dotenv
 
 # Utilities
-typing-extensions>=4.0.0
-colorama>=0.4.6
+typing-extensions
+colorama
 
 # Web Interface
-streamlit>=1.28.0
-fastapi>=0.100.0
-uvicorn>=0.23.0
+streamlit
+fastapi
+uvicorn
 
 # Document Processing
-PyPDF2>=3.0.0
-python-docx>=1.0.0
+PyPDF2
+python-docx
 
 # Testing
-pytest>=7.0.0
+pytest
