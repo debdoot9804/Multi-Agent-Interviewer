@@ -133,30 +133,36 @@ Visit the app to experience:
 The system uses LangGraph to orchestrate a multi-agent interview process with AI evaluation:
 
 ```mermaid
-graph TD
-    A[Start Interview] --> B[Technical Agent - Alex]
-    B -->|6 Questions| C[Technical Round Complete]
-    C --> D[HR Agent - Olivia]
-    D -->|3 Questions| E[HR Round Complete]
-    E --> F[Manager Agent - Rahul]
-    F -->|2 Questions| G[Manager Round Complete]
-    G --> H[Evaluation Agent]
-    H -->|Analysis & Scoring| I[End - Display Results]
-    
-    style A fill:#667eea,stroke:#333,stroke-width:2px,color:#fff
-    style B fill:#667eea,stroke:#333,stroke-width:2px,color:#fff
-    style D fill:#f093fb,stroke:#333,stroke-width:2px,color:#fff
-    style F fill:#4facfe,stroke:#333,stroke-width:2px,color:#fff
-    style H fill:#11998e,stroke:#333,stroke-width:2px,color:#fff
-    style I fill:#38ef7d,stroke:#333,stroke-width:2px,color:#fff
+flowchart LR
+    A[🎬 Start] --> B[💻 Technical Agent<br/>Alex]
+    B --> C[🤝 HR Agent<br/>Olivia]
+    C --> D[👔 Manager Agent<br/>Rahul]
+    D --> E[🎯 Evaluation Agent]
+    E --> F[✅ Results]
 ```
 
-**Workflow Details:**
-- **Technical Agent (Alex)**: Asks 6 technical questions about coding, system design, and algorithms
-- **HR Agent (Olivia)**: Asks 3 questions about cultural fit, soft skills, and teamwork
-- **Manager Agent (Rahul)**: Asks 2 questions about leadership, strategy, and career vision
-- **Evaluation Agent**: Analyzes entire interview and provides score, strengths, weaknesses, and suggestions
-- **Results**: Comprehensive evaluation with actionable feedback
+**Interview Workflow:**
+
+1. **💻 Technical Round (Alex)** - 6 questions
+   - Coding skills and algorithms
+   - System design and architecture
+   - Problem-solving abilities
+
+2. **🤝 HR Round (Olivia)** - 3 questions
+   - Cultural fit assessment
+   - Soft skills and communication
+   - Teamwork and collaboration
+
+3. **👔 Manager Round (Rahul)** - 2 questions
+   - Leadership potential
+   - Strategic thinking
+   - Career vision and goals
+
+4. **🎯 Evaluation & Scoring**
+   - Comprehensive interview analysis
+   - Score (0-100) with detailed breakdown
+   - Strengths, weaknesses, and suggestions
+   - Final hiring recommendation
 
 ### State Management
 
