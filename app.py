@@ -184,6 +184,9 @@ JOB_ROLES = [
     "Full Stack Developer",
     "Product Manager",
     "System Architect",
+    "PowerBI Analyst",
+    "Google Looker Analyst",
+    "Business Intelligence Analyst",
     "Other (Specify)"
 ]
 
